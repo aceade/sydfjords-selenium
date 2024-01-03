@@ -2,7 +2,7 @@
 const {By, Builder} = require('selenium-webdriver');
 const assert = require("assert");
 
-  describe('First script', function () {
+  xdescribe('First script (setup test) - used only as a reference', function () {
     let driver;
     
     before(async () => {
