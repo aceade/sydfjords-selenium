@@ -2,9 +2,11 @@ const {By, Builder, until} = require('selenium-webdriver');
 const assert = require("assert");
 const logging = require('selenium-webdriver/lib/logging');
 
-  describe('OG Vue app', function () {
+  describe('React app', function () {
     let driver;
     
+    const url = "https://aceade.github.io/sydfjords-react/";
+
     before(async () => {
         // using Firefox because it closes the browser window when done
         // and Chrome reports some odd "policy violation" message
@@ -17,7 +19,7 @@ const logging = require('selenium-webdriver/lib/logging');
     after(async () => await driver.quit());
     
     it('Loading Home page', async function () {
-      await driver.get('https://aceade.github.io/sydfjords/#/');
+      await driver.get(url);
       
       let title = await driver.getTitle();
       assert.equal("Visit the Sydfjords", title);
@@ -26,14 +28,14 @@ const logging = require('selenium-webdriver/lib/logging');
       
       // easiest way to check this sort of thing is to await the Promise and then get attributes
       let hero = await driver.findElement(By.css("#hero")).getAttribute("src");
-      assert.equal(hero, "https://aceade.github.io/sydfjords/hero-480w.webp");
+      assert.equal(hero, "https://aceade.github.io/sydfjords-react/hero-480w.webp");
       let header = await driver.findElement(By.css("h1")).getText();
       assert.equal("Welcome to a land steeped in magic", header);
 
     });
 
     it("Changing language on home page", async function() {
-      await driver.get('https://aceade.github.io/sydfjords/#/');
+        await driver.get(url);
 
       let homeLink = await driver.findElement(By.css("a"));
       let homeLinkText = await homeLink.getText();
@@ -55,8 +57,8 @@ const logging = require('selenium-webdriver/lib/logging');
     });
 
     it("Navbar dropdown for attractions", async() => {
-      await driver.get('https://aceade.github.io/sydfjords/#/');
-      let attractionsMenuVisible = await driver.findElement(By.id("attractionMenu")).isDisplayed();
+        await driver.get(url);
+      let attractionsMenuVisible = await driver.findElement(By.id("attractionsMenu")).isDisplayed();
       assert.equal(false, attractionsMenuVisible);
 
       // find the dropbtn classed-button above attractionMenu
@@ -64,25 +66,25 @@ const logging = require('selenium-webdriver/lib/logging');
       const actions = driver.actions({async: true});
       await actions.move({origin: buttons[1]}).perform();
 
-      attractionsMenuVisible = await driver.findElement(By.id("attractionMenu")).isDisplayed();
+      attractionsMenuVisible = await driver.findElement(By.id("attractionsMenu")).isDisplayed();
       assert.equal(true, attractionsMenuVisible);
     });
 
     it("Loading About page", async() => {
-      await driver.get('https://aceade.github.io/sydfjords/#/about');
+        await driver.get(url + "about");
       const headers = await driver.findElements(By.css("h2"));
       const firstText = await headers[0].getText();
-      assert.equal(firstText, "Tourism offices");
+      assert.equal(firstText, "Tourism Offices");
 
       const secondText = await headers[1].getText();
-      assert.equal(secondText, "Email us");
+      assert.equal(secondText, "Email Us");
 
       const thirdText = await headers[2].getText();
       assert.equal(thirdText, "About");
     });
 
     it("Testing email form (invalid details)", async() => {
-      await driver.get('https://aceade.github.io/sydfjords/#/about');
+        await driver.get(url + "about");
 
       let nameField = await driver.findElement(By.id("name"));
       let emailField = await driver.findElement(By.id("email"));
@@ -113,12 +115,12 @@ const logging = require('selenium-webdriver/lib/logging');
       await submitButton.click();
 
       statusText = await submitStatus.getText();
-      assert.equal(statusText, "Sending...");
+      assert.equal(statusText, "Your message could not be sent. Please try again later");
       await driver.wait(until.elementTextIs(submitStatus, ""), 5000);
     });
 
     it("Testing email form (valid details)", async() => {
-      await driver.get('https://aceade.github.io/sydfjords/#/about');
+        await driver.get(url + "about");
 
       let nameField = await driver.findElement(By.id("name"));
       let emailField = await driver.findElement(By.id("email"));
@@ -142,8 +144,7 @@ const logging = require('selenium-webdriver/lib/logging');
       await submitButton.click();
 
       let statusText = await submitStatus.getText();
-      // since the email endpoint is no longer deployed, this will only be "sending"
-      assert.equal(statusText, "Sending...");
+      assert.equal(statusText, "Your message could not be sent. Please try again later");
       await driver.wait(until.elementTextIs(submitStatus, ""), 5000);
     });
   
